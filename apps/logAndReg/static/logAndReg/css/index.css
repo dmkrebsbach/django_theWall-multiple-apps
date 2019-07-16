@@ -1,0 +1,16 @@
+
+*{margin:0;padding:0;}
+
+.container{
+    display: flex;
+    justify-content: space-around;
+    margin: 100px;
+}
+
+h1 {
+    color: red;
+}
+
+h3 {
+    margin-top: 15px;
+}

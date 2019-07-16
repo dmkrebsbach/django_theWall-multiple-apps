@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Your Message Wall</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'theWall/css/wall.css' %}">
+</head>
+    <body>
+        <div class="container">
+            <div class = "header">
+                <h1> WELCOME TO YOUR WALL </h1>
+                <p> Welcome, {{request.session.firstName}}!</p>
+                <a href="/thewall/logout">Log out</a>
+            </div>
+
+            {% if messages %}  <!--these are the recurring messages for errors/validation-->
+                <ul class="messages">
+                    {% for message in messages %}
+                        <li {% if message.tags %} class="{{ message.tags }} banner"{% endif %}>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+
+            <div class = "userMessage">  <!--this code is for the user Message input-->
+                <form class ="messageInput" action="/thewall/add_message" method="POST">
+                    {% csrf_token %}
+                    <h2>Post A Message for Your Friends!</h2>
+                    <textarea class="textboxInput" name="add_message"></textarea></br></br>
+                    <input type="submit" value="Post Your Message" class="messageButton">
+                </form>
+            </div>
+
+            <div class = postedMessages> <!--this iterates posted messages, comments, delete comments-->
+            
+                {% for message in postedMessages %}
+                    <h4>{{message.user.firstName}} {{message.user.lastName}} - <span>{{message.createdAt}}</span></h4>
+                    <p>{{message.user.firstName}} wrote the message: {{message.content}}</p>
+                    </br>
+                    {% if message.user.id == request.session.id %}
+                        <a href="delete/{{message.id}}">Delete Message</a>
+                        </br></br>
+                    {% endif %}
+
+                    
+                        {% for comment in message.comments.all%}
+                            <div class="comment">
+                                
+                                <h4>{{comment.user.firstName}} {{comment.user.lastName}} - <span>{{comment.createdAt}}</h4>
+                                <p>{{message.user.firstName}} made a comment: {{comment.content}}</p>
+                                
+                                </br></br>
+                            </div>
+                        {% endfor %}
+                    
+                
+                    <form class ="commentInput" action="comment/{{message.id}}" method="POST">
+                        {% csrf_token %}
+                        <h4>Post A Comment on this Thread!</h4>
+                        <textarea class="textboxInput" name="userComment"></textarea></br></br>
+                        <input type="submit" value="Post Your Comment" class="commentButton">
+                        </br></br></br>
+                    </form>
+                {% endfor %}
+            
+            </div>
+        </div>
+    </body>
+</html>
